@@ -1,61 +1,100 @@
 class FSM {
-    /**
-     * Creates new FSM instance.
-     * @param config
-     */
-    constructor(config) {}
 
-    /**
-     * Returns active state.
-     * @returns {String}
-     */
-    getState() {}
+    constructor(config) {
+this.state=config.initial;
+this.config=config.states;
+this.count=0;
+this.countTrigger=0;
+    }
 
-    /**
-     * Goes to specified state.
-     * @param state
-     */
-    changeState(state) {}
+    getState() {
+        return this.state;
+    }
 
-    /**
-     * Changes state according to event transition rules.
-     * @param event
-     */
-    trigger(event) {}
+    changeState(state) {
+        this.count++;
+       for (var key in this.config){
+        if (state===key)
+            
+return this.state=state;
+        }
+throw new error('state is not exist');
+    }
+    
 
-    /**
-     * Resets FSM state to initial.
-     */
-    reset() {}
+    trigger(event) {
+        for (var key in this.config){  
+        for (var secondkey in this.config[key]){
+            for (var thirtkey in this.config[key][secondkey]){
+            if (event===thirtkey){
+                this.state=this.config[key][secondkey][thirtkey];
+                return this.state;
+            }
+        }}}
+       throw new erro('event is not exist');
+    }
 
-    /**
-     * Returns an array of states for which there are specified event transition rules.
-     * Returns all states if argument is undefined.
-     * @param event
-     * @returns {Array}
-     */
-    getStates(event) {}
+  
+    reset() {
+        return this.state='normal';
+    }
 
-    /**
-     * Goes back to previous state.
-     * Returns false if undo is not available.
-     * @returns {Boolean}
-     */
-    undo() {}
+  
+    getStates(event) {
+        var tempAr=[];
+            
+        if (!event){
+            for (var key in this.config){  
+                tempAr.push(key);  
+            }
+            return tempAr;
+        }
+            for (var key in this.config){  
+        for (var secondkey in this.config[key]){
+            for (var thirtkey in this.config[key][secondkey]){
+            if (event===thirtkey){
+                tempAr.push(key);
+            }
+        }
+        }
+    }
+        return tempAr;
+    }
 
-    /**
-     * Goes redo to state.
-     * Returns false if redo is not available.
-     * @returns {Boolean}
-     */
-    redo() {}
+ 
+    undo() {
+        if (this.state==='normal'){
+            return false;
+        }
 
-    /**
-     * Clears transition history
-     */
-    clearHistory() {}
+        for (var i=0; i<this.getStates().length; i++){
+        if (this.state===this.getStates()[i]){
+              if (this.count>0){
+            return this.state=this.getStates()[i-2];
+        }
+       else {return this.state=this.getStates()[i-1];}
+    }
+     
+}
+}
+
+    redo() {
+        if (this.state==='normal'){
+            return false;
+        }
+
+for (var i=0; i<this.getStates().length; i++){
+            if (this.state===this.getStates()[i]){
+              return  this.state=this.getStates()[i+1];
+            }
+        }
+
+    }
+
+    clearHistory() {
+     this.state="normal";
+    }
 }
 
 module.exports = FSM;
 
-/** @Created by Uladzimir Halushka **/
