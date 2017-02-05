@@ -3,8 +3,9 @@ class FSM {
     constructor(config) {
 this.state=config.initial;
 this.config=config.states;
-this.count=0;
-this.countTrigger=0;
+this.initial=config.initial;
+this.helpArray=[];
+
     }
 
     getState() {
@@ -12,31 +13,37 @@ this.countTrigger=0;
     }
 
     changeState(state) {
-        this.count++;
+        this.helpArray.push(this.state); 
        for (var key in this.config){
-        if (state===key)
-            
-return this.state=state;
-        }
+        if (state===key){
+          
+      this.state=state;
+        
+this.helpArray.push(this.state); 
+return this.state;
+        }}
+        
 throw new error('state is not exist');
     }
     
 
-    trigger(event) {
-        for (var key in this.config){  
-        for (var secondkey in this.config[key]){
-            for (var thirtkey in this.config[key][secondkey]){
-            if (event===thirtkey){
-                this.state=this.config[key][secondkey][thirtkey];
+    trigger(event) {   
+    this.helpArray.push(this.state); 
+        for (var key in this.config[this.state]){  
+        for (var secondkey in this.config[this.state][key]){
+            
+            if (event===secondkey){
+                this.state=this.config[this.state][key][secondkey];
+                this.helpArray.push(this.state);
                 return this.state;
             }
-        }}}
-       throw new erro('event is not exist');
-    }
+        }}
+      throw new error('event is not exist');  
+}
 
   
     reset() {
-        return this.state='normal';
+        return this.state=this.initial;
     }
 
   
@@ -49,6 +56,7 @@ throw new error('state is not exist');
             }
             return tempAr;
         }
+        
             for (var key in this.config){  
         for (var secondkey in this.config[key]){
             for (var thirtkey in this.config[key][secondkey]){
@@ -63,36 +71,36 @@ throw new error('state is not exist');
 
  
     undo() {
-        if (this.state==='normal'){
+        if (this.state===this.initial){
             return false;
         }
-
-        for (var i=0; i<this.getStates().length; i++){
-        if (this.state===this.getStates()[i]){
-              if (this.count>0){
-            return this.state=this.getStates()[i-2];
+        for (var i=0; i<this.helpArray.length; i++){
+        if (this.state===this.helpArray[i]){
+           this.state=this.helpArray[i-1];
+           return true;
+           
         }
-       else {return this.state=this.getStates()[i-1];}
-    }
-     
+        
 }
 }
 
     redo() {
-        if (this.state==='normal'){
+        for (var i=this.helpArray.length-2; i>=0; i--){
+            if (this.state===this.helpArray[i]){
+                this.state=this.helpArray[i+1];
+              return true;
+          }
+      }
+
+        if (this.state===this.initial){
             return false;
         }
 
-for (var i=0; i<this.getStates().length; i++){
-            if (this.state===this.getStates()[i]){
-              return  this.state=this.getStates()[i+1];
-            }
-        }
 
     }
 
     clearHistory() {
-     this.state="normal";
+     this.state=this.initial;
     }
 }
 
